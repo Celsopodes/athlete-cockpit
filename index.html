@@ -65,4 +65,1073 @@
       <p class="text-[11px] text-gray-400" id="headerSubtitle">Neto • 85,0 kg • LTHR 157 bpm • 70.3 Sub-4h50</p>
     </div>
     <div class="flex items-center gap-2">
-      <button onclick="triggerGarminSync()" id="syncBtn" class="bg-sky-500/15 hover:bg-sky-500/25 border
+      <button onclick="triggerGarminSync()" id="syncBtn" class="bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-sky-300 text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 active:scale-95 transition">
+        <svg id="syncIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Garmin</span>
+      </button>
+      <button onclick="openConfigModal()" class="p-2 rounded-xl bg-white/5 text-gray-300 hover:text-white active:scale-95 transition" title="Configurar Planilha">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast Banner -->
+  <div id="toast" class="hidden fixed top-16 left-4 right-4 z-50 bg-sky-950/95 border border-sky-400/40 text-sky-100 text-xs font-medium px-4 py-3 rounded-2xl shadow-xl backdrop-blur-md"></div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
+
+    <!-- ==================== TAB 1: HOJE ==================== -->
+    <section id="tab-hoje" class="space-y-4">
+
+      <!-- Semáforo / Status Card -->
+      <div class="card p-4 flex items-center justify-between border-l-4 border-amber-400" id="semaphoreCard">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400" id="semaphoreTag">🟡 Semáforo Amarelo • Fadiga Acumulada</span>
+          <h2 class="text-sm font-bold text-white mt-0.5" id="semaphoreTitle">Foco: Qualidade na Bike + Proteção Joelho</h2>
+          <p class="text-xs text-gray-400 mt-0.5" id="semaphoreDesc">Poupe pernas na academia; priorize cadência 90+ rpm.</p>
+        </div>
+        <div class="text-right pl-2">
+          <div class="text-2xl font-extrabold text-emerald-400" id="readinessBig">80</div>
+          <div class="text-[10px] text-gray-400 uppercase font-semibold">Readiness</div>
+        </div>
+      </div>
+
+      <!-- KPIs Principais: CTL / ATL / TSB -->
+      <div class="grid grid-cols-3 gap-2.5">
+        <div class="card p-3.5 text-center">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Fitness (CTL)</div>
+          <div class="text-2xl font-extrabold text-sky-400 mt-1" id="kpiCtl">68,6</div>
+          <div class="text-[10px] text-emerald-400 mt-0.5 font-medium">Base 28d</div>
+        </div>
+        <div class="card p-3.5 text-center">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Fatigue (ATL)</div>
+          <div class="text-2xl font-extrabold text-purple-400 mt-1" id="kpiAtl">90,2</div>
+          <div class="text-[10px] text-gray-400 mt-0.5 font-medium">Aguda 7d</div>
+        </div>
+        <div class="card p-3.5 text-center">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Form (TSB)</div>
+          <div class="text-2xl font-extrabold text-amber-400 mt-1" id="kpiTsb">-21,6</div>
+          <div class="text-[10px] text-amber-300 mt-0.5 font-medium">Overreaching</div>
+        </div>
+      </div>
+
+      <!-- ACWR & Load Balance Bar -->
+      <div class="card p-4 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-white">Load Balance (ACWR)</span>
+            <span class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold" id="acwrBadge">1,31 • OVERLOAD</span>
+          </div>
+          <span class="text-xs font-bold text-gray-300" id="weekLoadText">116,7 UA sem.</span>
+        </div>
+        <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden relative">
+          <div class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 rounded-full transition-all duration-500" id="acwrBar" style="width: 72%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-gray-500 font-medium">
+          <span>0,80 (Subcarga)</span>
+          <span class="text-emerald-400">0,80–1,30 (Sweet Spot)</span>
+          <span>1,50+ (Risco)</span>
+        </div>
+      </div>
+
+      <!-- Biomarcadores de Recuperação -->
+      <div class="card p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Recuperação & Saúde</h3>
+          <span class="text-[11px] text-gray-500" id="lastSyncText">Última leitura</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400">HRV Noturna</div>
+              <div class="text-lg font-bold text-white mt-0.5"><span id="bioHrv">43</span> <span class="text-xs font-normal text-gray-400">ms</span></div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400" id="bioHrvStatus">BALANCED</span>
+          </div>
+          <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400">Sono</div>
+              <div class="text-lg font-bold text-white mt-0.5"><span id="bioSleep">10,8</span><span class="text-xs font-normal text-gray-400">h</span></div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-sky-500/15 text-sky-400">Score <span id="bioSleepScore">77</span></span>
+          </div>
+          <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400">FC Repouso</div>
+              <div class="text-lg font-bold text-white mt-0.5"><span id="bioRhr">53</span> <span class="text-xs font-normal text-gray-400">bpm</span></div>
+            </div>
+            <span class="text-[10px] font-semibold text-emerald-400">Na base</span>
+          </div>
+          <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-gray-400">Body Battery</div>
+              <div class="text-lg font-bold text-white mt-0.5"><span id="bioBb">82</span><span class="text-xs font-normal text-gray-400">/100</span></div>
+            </div>
+            <span class="text-[10px] font-semibold text-gray-400">Estresse <span id="bioStress">27</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumo da Semana Atual -->
+      <div class="card p-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Semana Atual (Desde Segunda)</h3>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-white/[0.03] p-2.5 rounded-xl">
+            <div class="text-[10px] text-gray-400">Volume</div>
+            <div class="text-sm font-bold text-white mt-0.5"><span id="wkHours">2,38</span> h</div>
+          </div>
+          <div class="bg-white/[0.03] p-2.5 rounded-xl">
+            <div class="text-[10px] text-gray-400">Carga TRIMP</div>
+            <div class="text-sm font-bold text-sky-400 mt-0.5"><span id="wkLoad">116,7</span> UA</div>
+          </div>
+          <div class="bg-white/[0.03] p-2.5 rounded-xl">
+            <div class="text-[10px] text-gray-400">FC Aeróbica</div>
+            <div class="text-sm font-bold text-emerald-400 mt-0.5"><span id="wkHr">129</span> bpm</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: ANALYTICS & MODALIDADES ==================== -->
+    <section id="tab-carga" class="hidden space-y-4">
+
+      <!-- Seletor de Modalidade -->
+      <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="selectSport('geral')" id="sport-btn-geral" class="pill-active border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition">📊 Geral</button>
+        <button onclick="selectSport('cycling')" id="sport-btn-cycling" class="pill-inactive border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition">🚴 Ciclismo</button>
+        <button onclick="selectSport('running')" id="sport-btn-running" class="pill-inactive border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition">🏃 Corrida</button>
+        <button onclick="selectSport('swimming')" id="sport-btn-swimming" class="pill-inactive border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition">🏊 Natação</button>
+        <button onclick="selectSport('strength')" id="sport-btn-strength" class="pill-inactive border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition">🏋️ Musculação</button>
+      </div>
+
+      <!-- ===== VISÃO GERAL ===== -->
+      <div id="analytics-geral" class="space-y-4">
+
+        <!-- Gráfico 1: PMC -->
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-sm font-bold text-white">Performance Management (PMC)</h2>
+              <p class="text-[11px] text-gray-400">Evolução CTL (Fitness), ATL (Fatigue) e Form (TSB)</p>
+            </div>
+          </div>
+          <div class="h-52">
+            <canvas id="pmcChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Trajetória até a Meta (Goal Glide Path) -->
+        <div class="card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-sm font-bold text-white">Trajetória até a Meta</h2>
+              <p class="text-[11px] text-gray-400">Projeção fisiológica vs. curva alvo 2027</p>
+            </div>
+            <div class="flex gap-1 bg-white/5 p-1 rounded-xl">
+              <button onclick="selectGoal('rio')" id="goal-btn-rio" class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition">Meia Rio</button>
+              <button onclick="selectGoal('floripa')" id="goal-btn-floripa" class="text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition">70.3 Floripa</button>
+            </div>
+          </div>
+
+          <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold" id="goalTargetLabel">Meta: 01:30:00 (4:15/km) • Mai/2027</div>
+              <div class="text-xs font-bold text-white mt-0.5" id="goalGapLabel">Atual est.: 01:41:42 (Gap: -11:42 | -34 s/km)</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-extrabold text-sky-400" id="goalPct">78%</div>
+              <div class="text-[9px] text-gray-400 uppercase font-semibold">Prontidão</div>
+            </div>
+          </div>
+
+          <div class="h-44">
+            <canvas id="goalChart"></canvas>
+          </div>
+
+          <!-- Decomposição do Gap -->
+          <div id="goalBreakdown" class="space-y-2 pt-1"></div>
+        </div>
+
+        <!-- Gráfico 3: Sport Split + Volume Semanal Empilhado -->
+        <div class="card p-4 space-y-3">
+          <div>
+            <h2 class="text-sm font-bold text-white">Distribuição de Volume por Modalidade</h2>
+            <p class="text-[11px] text-gray-400">Horas acumuladas por esporte nas últimas semanas</p>
+          </div>
+          <div class="grid grid-cols-5 gap-2 items-center">
+            <div class="col-span-2 h-36">
+              <canvas id="sportSplitChart"></canvas>
+            </div>
+            <div class="col-span-3 space-y-1.5 text-xs">
+              <div class="flex justify-between items-center bg-white/[0.03] px-2.5 py-1.5 rounded-lg">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-400"></span>Ciclismo</span>
+                <span class="font-bold text-white" id="splitCycling">42%</span>
+              </div>
+              <div class="flex justify-between items-center bg-white/[0.03] px-2.5 py-1.5 rounded-lg">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400"></span>Natação</span>
+                <span class="font-bold text-white" id="splitSwimming">26%</span>
+              </div>
+              <div class="flex justify-between items-center bg-white/[0.03] px-2.5 py-1.5 rounded-lg">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400"></span>Corrida</span>
+                <span class="font-bold text-white" id="splitRunning">18%</span>
+              </div>
+              <div class="flex justify-between items-center bg-white/[0.03] px-2.5 py-1.5 rounded-lg">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span>Força</span>
+                <span class="font-bold text-white" id="splitStrength">14%</span>
+              </div>
+            </div>
+          </div>
+          <div class="h-44 pt-2 border-t border-white/5">
+            <canvas id="weeklyStackedChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 4: Zonas de FC (LTHR 157 bpm) -->
+        <div class="card p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-sm font-bold text-white">Polarização por Zonas de FC</h2>
+              <p class="text-[11px] text-gray-400">Baseado no LTHR de 157 bpm (Modelo 80/20)</p>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400">81% Aeróbico</span>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div>
+              <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Z1 • Recuperação (&lt;127 bpm)</span><span class="font-bold text-sky-400">24%</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded-full"><div class="h-full bg-sky-400 rounded-full" style="width: 24%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Z2 • Base Aeróbica (127–139 bpm)</span><span class="font-bold text-emerald-400">57%</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded-full"><div class="h-full bg-emerald-400 rounded-full" style="width: 57%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Z3 • Tempo / Sweet Spot (140–149 bpm)</span><span class="font-bold text-amber-400">12%</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded-full"><div class="h-full bg-amber-400 rounded-full" style="width: 12%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Z4–Z5 • Limiar & VO2 (150+ bpm)</span><span class="font-bold text-rose-400">7%</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded-full"><div class="h-full bg-rose-400 rounded-full" style="width: 7%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== VISÃO POR ESPORTE ESPECÍFICO ===== -->
+      <div id="analytics-sport" class="hidden space-y-4">
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Volume Recente</div>
+            <div class="text-xl font-extrabold text-white mt-1" id="spVolume">-</div>
+            <div class="text-[10px] text-sky-400 mt-0.5" id="spAvgDist">-</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400" id="spMetricLabel">Ritmo / Velocidade</div>
+            <div class="text-xl font-extrabold text-emerald-400 mt-1" id="spMetricVal">-</div>
+            <div class="text-[10px] text-gray-400 mt-0.5" id="spMetricSub">-</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">FC Média</div>
+            <div class="text-xl font-extrabold text-purple-400 mt-1" id="spHr">-</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Eficiência cardíaca</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Carga Acumulada</div>
+            <div class="text-xl font-extrabold text-amber-400 mt-1" id="spTrimp">-</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">TRIMP específico</div>
+          </div>
+        </div>
+
+        <div class="card p-4">
+          <div class="mb-3">
+            <h2 class="text-sm font-bold text-white" id="spChartTitle">Desempenho × FC Média</h2>
+            <p class="text-[11px] text-gray-400" id="spChartSub">Histórico sincronizado do Garmin</p>
+          </div>
+          <div class="h-52">
+            <canvas id="sportEfficiencyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card p-4 space-y-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Últimas Sessões</h3>
+          <div id="spHistoryList" class="space-y-2"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 3: AGENDA ==================== -->
+    <section id="tab-agenda" class="hidden space-y-3">
+      <div class="card p-4">
+        <h2 class="text-sm font-bold text-white">Agenda Integrada (Endurance + Natação Fixa)</h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">Grade fixa: Seg 3k • Ter 3k • Qui 3k • Sáb 1,5k</p>
+      </div>
+      <div id="scheduleList" class="space-y-2.5"></div>
+    </section>
+
+    <!-- ==================== TAB 4: FEEDBACK POR TREINO ==================== -->
+    <section id="tab-feedback" class="hidden space-y-4">
+      <div class="card p-4 space-y-4">
+        <div>
+          <h2 class="text-sm font-bold text-white">Check-in Pós-Treino & Joelho</h2>
+          <p class="text-[11px] text-gray-400">Vinculado diretamente à sessão sincronizada do Garmin</p>
+        </div>
+
+        <!-- Filtro Hoje vs Últimos 7 dias -->
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-semibold text-gray-300">Selecione o Treino Realizado</label>
+          <div class="flex gap-1 bg-white/5 p-1 rounded-xl">
+            <button onclick="filterWorkouts('today')" id="wk-filter-today" class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition">Hoje</button>
+            <button onclick="filterWorkouts('recent')" id="wk-filter-recent" class="text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition">Recentes</button>
+          </div>
+        </div>
+
+        <!-- Seletor de Treino Específico -->
+        <div>
+          <select id="fbWorkoutSelect" onchange="onWorkoutSelectChange()" class="w-full bg-[#0B0E14] border border-white/15 rounded-xl px-3 py-2.5 text-xs font-semibold text-white">
+            <option value="">Carregando treinos...</option>
+          </select>
+        </div>
+
+        <!-- Cartão Resumo do Treino Selecionado -->
+        <div id="selectedWorkoutCard" class="bg-white/[0.03] border border-white/10 rounded-xl p-3 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-bold uppercase tracking-wider text-sky-400" id="selWkMeta">24/11 • Natação</div>
+            <div class="text-xs font-bold text-white mt-0.5" id="selWkTitle">Natação em piscina (3.000 m)</div>
+            <div class="text-[11px] text-gray-400 mt-0.5" id="selWkStats">65 min • FC 134 bpm • 72 UA</div>
+          </div>
+          <span id="selWkBadge" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-amber-500/15 text-amber-300">Pendente</span>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-gray-300">Percepção de Esforço (RPE)</span>
+            <span class="text-sky-400 font-bold" id="rpeVal">6 / 10</span>
+          </div>
+          <input type="range" id="fbRpe" min="1" max="10" value="6" class="w-full" oninput="document.getElementById('rpeVal').innerText = this.value + ' / 10'" />
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-gray-300">Desconforto Joelho Direito (0 = Zero dor)</span>
+            <span class="text-emerald-400 font-bold" id="kneeVal">0 / 10</span>
+          </div>
+          <input type="range" id="fbKnee" min="0" max="10" value="0" class="w-full" oninput="updateKneeLabel(this.value)" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">Sono / Disposição Hoje</label>
+          <input type="text" id="fbSleep" placeholder="Ex.: Dormi 7h40, acordei bem disposto" class="w-full bg-[#0B0E14] border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">Observações Técnicas da Sessão</label>
+          <textarea id="fbNotes" rows="2" placeholder="Ex.: Cadência 94 rpm na bike, joelho 100% silencioso" class="w-full bg-[#0B0E14] border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600"></textarea>
+        </div>
+
+        <button onclick="submitFeedback()" id="saveFbBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm py-3 rounded-xl active:scale-98 transition">
+          Salvar Feedback deste Treino
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-[#0F131B]/95 backdrop-blur-lg border-t border-white/10 px-2 py-2">
+    <div class="max-w-md mx-auto grid grid-cols-4 text-center">
+      <button onclick="switchTab('hoje')" id="nav-hoje" class="tab-active flex flex-col items-center py-1">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+        <span class="text-[10px] font-semibold">Hoje</span>
+      </button>
+      <button onclick="switchTab('carga')" id="nav-carga" class="tab-inactive flex flex-col items-center py-1">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+        <span class="text-[10px] font-semibold">Analytics</span>
+      </button>
+      <button onclick="switchTab('agenda')" id="nav-agenda" class="tab-inactive flex flex-col items-center py-1">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        <span class="text-[10px] font-semibold">Agenda</span>
+      </button>
+      <button onclick="switchTab('feedback')" id="nav-feedback" class="tab-inactive flex flex-col items-center py-1">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+        <span class="text-[10px] font-semibold">Feedback</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Config Modal -->
+  <div id="configModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card w-full max-w-sm p-5 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-bold text-white">Conectar Planilha</h3>
+        <button onclick="closeConfigModal()" class="text-gray-400 hover:text-white text-lg">&times;</button>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-300 mb-1">URL do Google Apps Script (/exec)</label>
+        <input type="url" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-[#0B0E14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-300 mb-1">Chave de Acesso (API_KEY)</label>
+        <input type="text" id="cfgKey" value="neto2027" class="w-full bg-[#0B0E14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white" />
+      </div>
+      <button onclick="saveConfig()" class="w-full bg-sky-500 text-slate-950 font-bold text-xs py-2.5 rounded-xl">
+        Salvar e Carregar Dados ao Vivo
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_SCHEDULE = [
+      { date: "2026-11-24", title: "BIKE INTERVALADO 1h10min + Natação 3.000m", sport: "cycling", duration: 135 },
+      { date: "2026-11-25", title: "CORRIDA CONTÍNUA LEVE 57min (10,2 km)", sport: "running", duration: 57 },
+      { date: "2026-11-26", title: "Natação Fixa 3.000m + Força Inferiores", sport: "swimming", duration: 110 },
+      { date: "2026-11-27", title: "BIKE GIRO SOLTO 70min + Força Tração", sport: "cycling", duration: 110 },
+      { date: "2026-11-28", title: "BIKE GIRO SOLTO 100min + Natação 1.500m", sport: "cycling", duration: 130 },
+      { date: "2026-11-29", title: "SIMULADO BRICK: Bike 76min + Corrida 24min", sport: "brick", duration: 100 }
+    ];
+
+    const DEFAULT_WORKOUTS = [
+      { id: "wk-1", date: "2026-11-24", time: "07:00", isToday: true, title: "Natação em piscina (3.000 m)", sport: "lap_swimming", distLabel: "3000 m", durMin: 65, avgHr: 134, trimp: 72.0, reviewed: false },
+      { id: "wk-2", date: "2026-11-24", time: "12:15", isToday: true, title: "BIKE INTERVALADO 1h10min", sport: "cycling", distLabel: "38,4 km", durMin: 70, avgHr: 128, trimp: 68.5, reviewed: false },
+      { id: "wk-3", date: "2026-11-24", time: "18:00", isToday: true, title: "Musculação • Estabilidade & Força", sport: "strength_training", distLabel: "", durMin: 35, avgHr: 104, trimp: 22.8, reviewed: false }
+    ];
+
+    const DEFAULT_SPORTS = {
+      cycling: {
+        label: "Ciclismo",
+        totalHours: "14,2 h",
+        totalDistance: "468 km",
+        avgDistPerSession: "46,8 km/sessão",
+        metricLabel: "Vel. Média",
+        metricValue: "33,2 km/h",
+        metricSub: "Meta 70.3: 36,0 km/h",
+        avgHr: "131 bpm",
+        totalTrimp: "684 UA",
+        chartTitle: "Ciclismo: Velocidade (km/h) × FC Média",
+        chartSubtitle: "Últimas sessões sincronizadas",
+        primaryLabel: "Velocidade (km/h)",
+        primaryColor: "#2DD4BF",
+        history: [
+          { date: "24/11", title: "BIKE INTERVALADO 1h10min", dist: "38,4 km", dur: "70 min", hr: 128, paceOrSpeed: "32,9 km/h", numericMetric: 32.9, trimp: 68.5 },
+          { date: "22/11", title: "Longão Estrada da Rhodia", dist: "72,0 km", dur: "127 min", hr: 134, paceOrSpeed: "34,0 km/h", numericMetric: 34.0, trimp: 138.0 },
+          { date: "19/11", title: "Giro Base Z2", dist: "41,5 km", dur: "75 min", hr: 125, paceOrSpeed: "33,2 km/h", numericMetric: 33.2, trimp: 66.2 }
+        ]
+      },
+      running: {
+        label: "Corrida",
+        totalHours: "6,8 h",
+        totalDistance: "82,4 km",
+        avgDistPerSession: "10,3 km/sessão",
+        metricLabel: "Pace Médio",
+        metricValue: "4:56 /km",
+        metricSub: "Meta Meia Rio: 4:15 /km",
+        avgHr: "136 bpm",
+        totalTrimp: "492 UA",
+        chartTitle: "Corrida: Velocidade (km/h) × FC Média",
+        chartSubtitle: "Evolução aeróbica",
+        primaryLabel: "Velocidade (km/h)",
+        primaryColor: "#818CF8",
+        history: [
+          { date: "23/11", title: "Corrida Base Aeróbica", dist: "10,2 km", dur: "52 min", hr: 130, paceOrSpeed: "5:05 /km", numericMetric: 11.8, trimp: 58.4 },
+          { date: "20/11", title: "Progressivo 12 km", dist: "12,0 km", dur: "57 min", hr: 141, paceOrSpeed: "4:45 /km", numericMetric: 12.6, trimp: 79.1 }
+        ]
+      },
+      swimming: {
+        label: "Natação",
+        totalHours: "7,5 h",
+        totalDistance: "24,0 km",
+        avgDistPerSession: "2,8 km/sessão",
+        metricLabel: "Pace Médio",
+        metricValue: "1:45 /100m",
+        metricSub: "Grade fixa: 10.500 m/sem",
+        avgHr: "133 bpm",
+        totalTrimp: "438 UA",
+        chartTitle: "Natação: Ritmo (m/min) × FC Média",
+        chartSubtitle: "Sessões de 3.000 m e 1.500 m",
+        primaryLabel: "Ritmo (m/min)",
+        primaryColor: "#38BDF8",
+        history: [
+          { date: "24/11", title: "Natação Fixa Segunda", dist: "3000 m", dur: "53 min", hr: 134, paceOrSpeed: "1:46 /100m", numericMetric: 56.6, trimp: 61.0 },
+          { date: "21/11", title: "Natação Pós-Brick Sábado", dist: "1500 m", dur: "26 min", hr: 135, paceOrSpeed: "1:44 /100m", numericMetric: 57.7, trimp: 31.2 }
+        ]
+      },
+      strength: {
+        label: "Musculação",
+        totalHours: "5,4 h",
+        totalDistance: "10 sessões",
+        avgDistPerSession: "32 min/sessão",
+        metricLabel: "Duração Média",
+        metricValue: "32 min",
+        metricSub: "Estabilidade & Potência",
+        avgHr: "106 bpm",
+        totalTrimp: "210 UA",
+        chartTitle: "Musculação: Duração (min) × FC Média",
+        chartSubtitle: "Controle de fadiga periférica",
+        primaryLabel: "Duração (min)",
+        primaryColor: "#FBBF24",
+        history: [
+          { date: "24/11", title: "Força Unilateral & Core", dist: "35 min", dur: "35 min", hr: 104, paceOrSpeed: "35 min", numericMetric: 35, trimp: 22.8 },
+          { date: "20/11", title: "Tração Superior & RDL", dist: "30 min", dur: "30 min", hr: 108, paceOrSpeed: "30 min", numericMetric: 30, trimp: 20.5 }
+        ]
+      }
+    };
+
+    let liveSportsData = DEFAULT_SPORTS;
+    let liveWorkouts = DEFAULT_WORKOUTS;
+    let workoutFilterMode = 'today';
+    let currentGoal = 'rio';
+    let liveTodayMetrics = { ctl: 68.6 };
+
+    let pmcChartInstance = null;
+    let goalChartInstance = null;
+    let splitChartInstance = null;
+    let stackedChartInstance = null;
+    let sportEffChartInstance = null;
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 4500);
+    }
+
+    function switchTab(tab) {
+      ['hoje', 'carga', 'agenda', 'feedback'].forEach(id => {
+        document.getElementById('tab-' + id).classList.add('hidden');
+        document.getElementById('nav-' + id).className = 'tab-inactive flex flex-col items-center py-1';
+      });
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('nav-' + tab).className = 'tab-active flex flex-col items-center py-1';
+    }
+
+    function openConfigModal() {
+      document.getElementById('cfgUrl').value = localStorage.getItem('cockpit_url') || '';
+      document.getElementById('cfgKey').value = localStorage.getItem('cockpit_key') || 'neto2027';
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.add('hidden');
+    }
+
+    function saveConfig() {
+      const url = document.getElementById('cfgUrl').value.trim();
+      const key = document.getElementById('cfgKey').value.trim();
+      localStorage.setItem('cockpit_url', url);
+      localStorage.setItem('cockpit_key', key);
+      closeConfigModal();
+      fetchDashboardData();
+    }
+
+    function updateKneeLabel(val) {
+      const el = document.getElementById('kneeVal');
+      el.innerText = val + ' / 10';
+      el.className = val <= 2 ? 'text-emerald-400 font-bold' : (val <= 4 ? 'text-amber-400 font-bold' : 'text-rose-400 font-bold');
+    }
+
+    function selectSport(sportKey) {
+      ['geral', 'cycling', 'running', 'swimming', 'strength'].forEach(k => {
+        document.getElementById('sport-btn-' + k).className =
+          (k === sportKey ? 'pill-active' : 'pill-inactive') +
+          ' border text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition';
+      });
+
+      if (sportKey === 'geral') {
+        document.getElementById('analytics-geral').classList.remove('hidden');
+        document.getElementById('analytics-sport').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('analytics-geral').classList.add('hidden');
+      document.getElementById('analytics-sport').classList.remove('hidden');
+
+      const sp = liveSportsData[sportKey] || DEFAULT_SPORTS[sportKey];
+      document.getElementById('spVolume').innerText = sp.totalHours;
+      document.getElementById('spAvgDist').innerText = sp.avgDistPerSession;
+      document.getElementById('spMetricLabel').innerText = sp.metricLabel;
+      document.getElementById('spMetricVal').innerText = sp.metricValue;
+      document.getElementById('spMetricSub').innerText = sp.metricSub;
+      document.getElementById('spHr').innerText = sp.avgHr;
+      document.getElementById('spTrimp').innerText = sp.totalTrimp;
+      document.getElementById('spChartTitle').innerText = sp.chartTitle;
+      document.getElementById('spChartSub').innerText = sp.chartSubtitle;
+
+      const histEl = document.getElementById('spHistoryList');
+      histEl.innerHTML = (sp.history || []).map(item => `
+        <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-bold text-sky-400">${item.date} • ${item.dist} (${item.dur})</div>
+            <div class="text-xs font-semibold text-white mt-0.5">${item.title}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-bold text-emerald-400">${item.paceOrSpeed}</div>
+            <div class="text-[10px] text-gray-400">FC ${item.hr} bpm • ${item.trimp} UA</div>
+          </div>
+        </div>
+      `).join('');
+
+      const rev = (sp.history || []).slice().reverse();
+      const ctx = document.getElementById('sportEfficiencyChart').getContext('2d');
+      if (sportEffChartInstance) sportEffChartInstance.destroy();
+      sportEffChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: rev.map(r => r.date),
+          datasets: [
+            {
+              label: sp.primaryLabel,
+              data: rev.map(r => r.numericMetric || 0),
+              borderColor: sp.primaryColor,
+              backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              yAxisID: 'y',
+              tension: 0.35,
+              borderWidth: 2.5
+            },
+            {
+              label: 'FC Média (bpm)',
+              data: rev.map(r => r.hr || 0),
+              borderColor: '#F472B6',
+              borderDash: [4, 4],
+              yAxisID: 'y1',
+              tension: 0.35,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 } } } },
+          scales: {
+            x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: { position: 'left', ticks: { color: sp.primaryColor, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y1: { position: 'right', ticks: { color: '#F472B6', font: { size: 10 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function selectGoal(goalKey) {
+      currentGoal = goalKey;
+      document.getElementById('goal-btn-rio').className =
+        goalKey === 'rio'
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition';
+      document.getElementById('goal-btn-floripa').className =
+        goalKey === 'floripa'
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition';
+      renderGoalChart();
+    }
+
+    function renderGoalChart() {
+      const ctl = liveTodayMetrics.ctl || 68.6;
+      const ctx = document.getElementById('goalChart').getContext('2d');
+      if (goalChartInstance) goalChartInstance.destroy();
+
+      if (currentGoal === 'rio') {
+        const pct = Math.min(99, Math.max(60, Math.round(74 + (ctl - 65) * 0.8)));
+        document.getElementById('goalTargetLabel').innerText = 'Meta: 01:30:00 (4:15/km) • Mai/2027';
+        document.getElementById('goalGapLabel').innerText = 'Atual est.: 01:41:42 (Gap: -11:42 | -34 s/km)';
+        document.getElementById('goalPct').innerText = pct + '%';
+
+        document.getElementById('goalBreakdown').innerHTML = `
+          <div>
+            <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Lastro Aeróbico (CTL ${ctl.toFixed(1)} → 82,0)</span><span class="font-bold text-sky-400">${Math.min(100, Math.round((ctl / 82) * 100))}%</span></div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full"><div class="h-full bg-sky-400 rounded-full" style="width: ${Math.min(100, Math.round((ctl / 82) * 100))}%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">Economia de Corrida (4:49 → 4:15/km)</span><span class="font-bold text-indigo-400">76%</span></div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full"><div class="h-full bg-indigo-400 rounded-full" style="width: 76%"></div></div>
+          </div>
+        `;
+
+        goalChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Nov/26', 'Dez/26', 'Jan/27', 'Fev/27', 'Mar/27', 'Abr/27', 'Mai/27'],
+            datasets: [
+              {
+                label: 'Curva Ideal (Sub-1h30)',
+                data: [78, 82, 86, 90, 94, 98, 100],
+                borderColor: '#64748B',
+                borderDash: [5, 5],
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 2
+              },
+              {
+                label: 'Sua Evolução Real',
+                data: [pct, null, null, null, null, null, null],
+                borderColor: '#38BDF8',
+                backgroundColor: '#38BDF8',
+                borderWidth: 3,
+                pointRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 } } } },
+            scales: {
+              x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+              y: { min: 65, max: 102, ticks: { color: '#6B7280', font: { size: 10 }, callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      } else {
+        const pct = Math.min(99, Math.max(60, Math.round(79 + (ctl - 65) * 0.6)));
+        document.getElementById('goalTargetLabel').innerText = 'Meta: Sub-04:50:00 • Out/2027';
+        document.getElementById('goalGapLabel').innerText = 'Atual: 05:12:00 (Gap: -22 min totais)';
+        document.getElementById('goalPct').innerText = pct + '%';
+
+        document.getElementById('goalBreakdown').innerHTML = `
+          <div>
+            <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">🏊 Natação 1,9k (32:00 → 31:30 | Gap: -30s)</span><span class="font-bold text-sky-400">96%</span></div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full"><div class="h-full bg-sky-400 rounded-full" style="width: 96%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">🚴 Bike 90k (34,0 → 36,0 km/h | Gap: -9 min)</span><span class="font-bold text-teal-400">84%</span></div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full"><div class="h-full bg-teal-400 rounded-full" style="width: 84%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px] mb-1"><span class="text-gray-300">🏃 Corrida 21,1k (01:52 → 01:40 | Gap: -12 min)</span><span class="font-bold text-indigo-400">76%</span></div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full"><div class="h-full bg-indigo-400 rounded-full" style="width: 76%"></div></div>
+          </div>
+        `;
+
+        goalChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Nov/26', 'Jan/27', 'Mar/27', 'Mai/27', 'Jul/27', 'Set/27', 'Out/27'],
+            datasets: [
+              {
+                label: 'Curva Ideal (Sub-4h50)',
+                data: [81, 84, 88, 91, 95, 98, 100],
+                borderColor: '#64748B',
+                borderDash: [5, 5],
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 2
+              },
+              {
+                label: 'Sua Evolução Real',
+                data: [pct, null, null, null, null, null, null],
+                borderColor: '#34D399',
+                backgroundColor: '#34D399',
+                borderWidth: 3,
+                pointRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 } } } },
+            scales: {
+              x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+              y: { min: 65, max: 102, ticks: { color: '#6B7280', font: { size: 10 }, callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      }
+    }
+
+    function renderOverviewCharts(pmc, weeklyDisciplines) {
+      const ctxPmc = document.getElementById('pmcChart').getContext('2d');
+      if (pmcChartInstance) pmcChartInstance.destroy();
+      pmcChartInstance = new Chart(ctxPmc, {
+        type: 'line',
+        data: {
+          labels: pmc.labels,
+          datasets: [
+            { label: 'Fitness (CTL)', data: pmc.ctl, borderColor: '#38BDF8', backgroundColor: 'rgba(56, 189, 248, 0.12)', fill: true, tension: 0.35, borderWidth: 2.5 },
+            { label: 'Fatigue (ATL)', data: pmc.atl, borderColor: '#C084FC', tension: 0.35, borderWidth: 2 },
+            { label: 'Form (TSB)', data: pmc.tsb || [], borderColor: '#FBBF24', borderDash: [4, 4], tension: 0.35, borderWidth: 1.8 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 } } } },
+          scales: {
+            x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+          }
+        }
+      });
+
+      const wk = weeklyDisciplines || {
+        labels: ['02/11', '09/11', '16/11', '23/11'],
+        cycling: [4.2, 5.1, 4.8, 1.2],
+        swimming: [2.8, 2.9, 3.0, 1.1],
+        running: [1.9, 2.2, 2.0, 0.0],
+        strength: [1.5, 1.6, 1.5, 0.5]
+      };
+
+      const sumC = wk.cycling.reduce((a, b) => a + b, 0);
+      const sumS = wk.swimming.reduce((a, b) => a + b, 0);
+      const sumR = wk.running.reduce((a, b) => a + b, 0);
+      const sumF = wk.strength.reduce((a, b) => a + b, 0);
+      const total = Math.max(0.1, sumC + sumS + sumR + sumF);
+
+      document.getElementById('splitCycling').innerText = Math.round((sumC / total) * 100) + '%';
+      document.getElementById('splitSwimming').innerText = Math.round((sumS / total) * 100) + '%';
+      document.getElementById('splitRunning').innerText = Math.round((sumR / total) * 100) + '%';
+      document.getElementById('splitStrength').innerText = Math.round((sumF / total) * 100) + '%';
+
+      const ctxSplit = document.getElementById('sportSplitChart').getContext('2d');
+      if (splitChartInstance) splitChartInstance.destroy();
+      splitChartInstance = new Chart(ctxSplit, {
+        type: 'doughnut',
+        data: {
+          labels: ['Ciclismo', 'Natação', 'Corrida', 'Força'],
+          datasets: [{
+            data: [sumC, sumS, sumR, sumF],
+            backgroundColor: ['#2DD4BF', '#38BDF8', '#818CF8', '#FBBF24'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const ctxStk = document.getElementById('weeklyStackedChart').getContext('2d');
+      if (stackedChartInstance) stackedChartInstance.destroy();
+      stackedChartInstance = new Chart(ctxStk, {
+        type: 'bar',
+        data: {
+          labels: wk.labels,
+          datasets: [
+            { label: 'Bike', data: wk.cycling, backgroundColor: '#2DD4BF' },
+            { label: 'Natação', data: wk.swimming, backgroundColor: '#38BDF8' },
+            { label: 'Corrida', data: wk.running, backgroundColor: '#818CF8' },
+            { label: 'Força', data: wk.strength, backgroundColor: '#FBBF24' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 } } } },
+          scales: {
+            x: { stacked: true, ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: { stacked: true, ticks: { color: '#6B7280', font: { size: 10 }, callback: v => v + 'h' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+          }
+        }
+      });
+    }
+
+    function renderSchedule(items) {
+      const list = document.getElementById('scheduleList');
+      list.innerHTML = items.map(item => `
+        <div class="card p-3.5 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-bold text-sky-400 uppercase">${item.date}</div>
+            <div class="text-xs font-bold text-white mt-0.5">${item.title}</div>
+          </div>
+          <span class="text-[11px] font-semibold text-gray-400 bg-white/5 px-2.5 py-1 rounded-lg">${item.duration} min</span>
+        </div>
+      `).join('');
+    }
+
+    function filterWorkouts(mode) {
+      workoutFilterMode = mode;
+      document.getElementById('wk-filter-today').className =
+        mode === 'today'
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition';
+      document.getElementById('wk-filter-recent').className =
+        mode === 'recent'
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-sky-500 text-slate-950 transition'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-lg text-gray-400 transition';
+      populateWorkoutSelect();
+    }
+
+    function populateWorkoutSelect() {
+      const sel = document.getElementById('fbWorkoutSelect');
+      let list = liveWorkouts || DEFAULT_WORKOUTS;
+      if (workoutFilterMode === 'today') {
+        const todays = list.filter(w => w.isToday);
+        if (todays.length > 0) list = todays;
+      }
+      sel.innerHTML = list.map((w, idx) => {
+        const check = w.reviewed ? '✓ ' : '';
+        const distPart = w.distLabel ? ` • ${w.distLabel}` : '';
+        return `<option value="${idx}" data-id="${w.id}">${check}${w.date.slice(5)} ${w.time} — ${w.title}${distPart}</option>`;
+      }).join('');
+      sel.dataset.currentList = JSON.stringify(list);
+      onWorkoutSelectChange();
+    }
+
+    function onWorkoutSelectChange() {
+      const sel = document.getElementById('fbWorkoutSelect');
+      const list = JSON.parse(sel.dataset.currentList || '[]');
+      const w = list[Number(sel.value) || 0];
+      if (!w) return;
+
+      document.getElementById('selWkMeta').innerText = `${w.date} às ${w.time} • ${w.sport}`;
+      document.getElementById('selWkTitle').innerText = w.title;
+      document.getElementById('selWkStats').innerText = `${w.distLabel ? w.distLabel + ' • ' : ''}${w.durMin} min • FC ${w.avgHr} bpm • ${w.trimp} UA`;
+
+      const badge = document.getElementById('selWkBadge');
+      if (w.reviewed) {
+        badge.innerText = '✓ Avaliado';
+        badge.className = 'text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400';
+      } else {
+        badge.innerText = 'Pendente';
+        badge.className = 'text-[10px] font-bold px-2 py-1 rounded-lg bg-amber-500/15 text-amber-300';
+      }
+    }
+
+    async function fetchDashboardData() {
+      const url = localStorage.getItem('cockpit_url');
+      const key = localStorage.getItem('cockpit_key') || 'neto2027';
+
+      renderSchedule(DEFAULT_SCHEDULE);
+      renderOverviewCharts(
+        {
+          labels: ['17/11', '18/11', '19/11', '20/11', '21/11', '22/11', '23/11'],
+          ctl: [53.2, 57.7, 59.0, 59.5, 64.6, 66.9, 68.6],
+          atl: [32.4, 52.2, 57.9, 59.9, 79.2, 86.1, 90.2],
+          tsb: [20.8, 5.5, 1.1, -0.4, -14.6, -19.2, -21.6]
+        },
+        null
+      );
+      renderGoalChart();
+      populateWorkoutSelect();
+
+      if (!url) return;
+
+      try {
+        showToast('Sincronizando dados ao vivo da planilha...');
+        const res = await fetch(`${url}?key=${encodeURIComponent(key)}&action=dashboard`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const t = data.today;
+        liveTodayMetrics = t;
+
+        if (t.weightKg) {
+          const wFmt = String(t.weightKg.toFixed(1)).replace('.', ',');
+          document.getElementById('headerSubtitle').innerText = `Neto • ${wFmt} kg • LTHR 157 bpm • 70.3 Sub-4h50`;
+        }
+
+        document.getElementById('kpiCtl').innerText = String(t.ctl.toFixed(1)).replace('.', ',');
+        document.getElementById('kpiAtl').innerText = String(t.atl.toFixed(1)).replace('.', ',');
+        document.getElementById('kpiTsb').innerText = String(t.tsb.toFixed(1)).replace('.', ',');
+        document.getElementById('readinessBig').innerText = t.readinessScore;
+        document.getElementById('acwrBadge').innerText = `${String(t.acwr.toFixed(2)).replace('.', ',')} • ${t.acwrStatus}`;
+        document.getElementById('weekLoadText').innerText = `${String(t.weekLoad.toFixed(1)).replace('.', ',')} UA sem.`;
+        document.getElementById('bioHrv').innerText = t.hrv;
+        document.getElementById('bioHrvStatus').innerText = t.hrvStatus;
+        document.getElementById('bioSleep').innerText = String(t.sleepHours).replace('.', ',');
+        document.getElementById('bioSleepScore').innerText = t.sleepScore;
+        document.getElementById('bioRhr').innerText = t.rhr;
+        document.getElementById('bioBb').innerText = t.bodyBattery;
+        document.getElementById('bioStress').innerText = t.stress;
+        document.getElementById('wkHours').innerText = String(t.weekHours.toFixed(2)).replace('.', ',');
+        document.getElementById('wkLoad').innerText = String(t.weekLoad.toFixed(1)).replace('.', ',');
+        document.getElementById('wkHr').innerText = t.weekAvgHr;
+        document.getElementById('lastSyncText').innerText = 'Atualizado às ' + data.updatedAt;
+
+        if (data.sports) liveSportsData = data.sports;
+        if (data.recentWorkouts && data.recentWorkouts.length) {
+          liveWorkouts = data.recentWorkouts;
+          populateWorkoutSelect();
+        }
+        if (data.pmc && data.pmc.labels.length) {
+          renderOverviewCharts(data.pmc, data.weeklyDisciplines);
+        }
+        renderGoalChart();
+        if (data.schedule && data.schedule.length) renderSchedule(data.schedule);
+        showToast('Painel conectado ao vivo com sucesso!');
+      } catch (err) {
+        showToast('Erro ao ler planilha: ' + err.message);
+      }
+    }
+
+    async function triggerGarminSync() {
+      const url = localStorage.getItem('cockpit_url');
+      const key = localStorage.getItem('cockpit_key') || 'neto2027';
+      if (!url) {
+        openConfigModal();
+        return;
+      }
+      const icon = document.getElementById('syncIcon');
+      icon.classList.add('animate-spin');
+      try {
+        await fetch(`${url}?key=${encodeURIComponent(key)}&action=sync_garmin`);
+        showToast('Garmin Sync disparado! Aguarde ~35s e recarregue.');
+        setTimeout(() => fetchDashboardData(), 38000);
+      } catch (e) {
+        showToast('Erro ao acionar Garmin: ' + e.message);
+      } finally {
+        setTimeout(() => icon.classList.remove('animate-spin'), 2000);
+      }
+    }
+
+    async function submitFeedback() {
+      const url = localStorage.getItem('cockpit_url');
+      const key = localStorage.getItem('cockpit_key') || 'neto2027';
+      if (!url) {
+        openConfigModal();
+        return;
+      }
+
+      const sel = document.getElementById('fbWorkoutSelect');
+      const list = JSON.parse(sel.dataset.currentList || '[]');
+      const w = list[Number(sel.value) || 0] || {};
+
+      const btn = document.getElementById('saveFbBtn');
+      btn.innerText = 'Salvando...';
+      btn.disabled = true;
+
+      const payload = {
+        workoutId: w.id || '',
+        date: w.date || new Date().toISOString().slice(0, 10),
+        workoutTitle: w.title || 'Treino',
+        sport: w.sport || '',
+        rpe: document.getElementById('fbRpe').value,
+        knee: document.getElementById('fbKnee').value,
+        sleepNote: document.getElementById('fbSleep').value,
+        notes: document.getElementById('fbNotes').value
+      };
+
+      try {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ key, payload })
+        });
+        w.reviewed = true;
+        sel.dataset.currentList = JSON.stringify(list);
+        onWorkoutSelectChange();
+        showToast(`Feedback salvo para "${w.title}"!`);
+        document.getElementById('fbNotes').value = '';
+      } catch (e) {
+        showToast('Erro ao salvar feedback: ' + e.message);
+      } finally {
+        btn.innerText = 'Salvar Feedback deste Treino';
+        btn.disabled = false;
+      }
+    }
+
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchDashboardData);
+  </script>
+</body>
+</html>
