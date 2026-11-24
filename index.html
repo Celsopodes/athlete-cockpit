@@ -300,31 +300,60 @@
           </div>
         </div>
 
-        <!-- Metas Macrociclo 2027 -->
-        <div class="card p-4">
-          <h2 class="text-sm font-bold text-white mb-1">Metas Macrociclo 2027</h2>
-          <p class="text-[11px] text-gray-400 mb-3">Projeção atual vs objetivos</p>
-          <div class="space-y-3">
-            <div class="bg-white/[0.03] p-3 rounded-xl">
-              <div class="flex justify-between text-xs font-semibold">
-                <span class="text-white">Meia Maratona do Rio (Mai/27)</span>
-                <span class="text-sky-400">Alvo: 01:30:00 (4:15/km)</span>
-              </div>
-              <div class="flex justify-between text-[11px] text-gray-400 mt-1">
-                <span>Atual est.: 01:41:42 (4:49/km)</span>
-                <span class="text-amber-400">Gap: -34 s/km</span>
-              </div>
+        <!-- Gráfico 5: Trajetória até a Meta (Goal Glide Path) & Decomposição do Gap -->
+        <div class="card p-4 space-y-3.5 border border-sky-500/20">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">Goal Glide Path • Ao Vivo</span>
+              <h2 class="text-sm font-bold text-white mt-0.5">Trajetória até a Meta</h2>
+              <p class="text-[11px] text-gray-400">Aproximação dinâmica (Ritmo Real + CTL)</p>
             </div>
-            <div class="bg-white/[0.03] p-3 rounded-xl">
-              <div class="flex justify-between text-xs font-semibold">
-                <span class="text-white">IRONMAN 70.3 Floripa (Out/27)</span>
-                <span class="text-emerald-400">Alvo: Sub-04:50:00</span>
-              </div>
-              <div class="flex justify-between text-[11px] text-gray-400 mt-1">
-                <span>Atual est.: 05:15:00</span>
-                <span class="text-amber-400">Gap: -25 min</span>
-              </div>
+            <div class="text-right">
+              <div class="text-2xl font-extrabold text-emerald-400" id="goalReadinessPct">78%</div>
+              <div class="text-[10px] text-gray-400 font-semibold" id="goalWeeksLeft">26 sem. restantes</div>
             </div>
+          </div>
+
+          <!-- Seletor de Prova Alvo -->
+          <div class="grid grid-cols-2 gap-2 bg-[#0B0E14] p-1 rounded-xl border border-white/5">
+            <button onclick="selectGoalTarget('rio')" id="goalBtn-rio" class="bg-sky-500 text-slate-950 font-bold text-xs py-2 rounded-lg transition">
+              🏃 Meia Rio (Mai/27)
+            </button>
+            <button onclick="selectGoalTarget('floripa')" id="goalBtn-floripa" class="text-gray-400 hover:text-white font-semibold text-xs py-2 rounded-lg transition">
+              🏊🚴🏃 70.3 Floripa (Out/27)
+            </button>
+          </div>
+
+          <!-- Resumo Atual vs Alvo -->
+          <div class="grid grid-cols-3 gap-2 text-center bg-white/[0.03] p-2.5 rounded-xl">
+            <div>
+              <div class="text-[10px] text-gray-400">Projetado Hoje</div>
+              <div class="text-xs font-extrabold text-white mt-0.5" id="goalCurrentEst">01:41:42</div>
+              <div class="text-[10px] text-gray-500" id="goalCurrentSub">4:49/km</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-gray-400">Meta Oficial</div>
+              <div class="text-xs font-extrabold text-emerald-400 mt-0.5" id="goalTargetVal">01:30:00</div>
+              <div class="text-[10px] text-gray-500" id="goalTargetSub">4:15/km</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-gray-400">Gap Restante</div>
+              <div class="text-xs font-extrabold text-amber-400 mt-0.5" id="goalGapVal">-11:42</div>
+              <div class="text-[10px] text-amber-300/80" id="goalGapSub">-34 s/km</div>
+            </div>
+          </div>
+
+          <!-- Gráfico Curva Ideal vs Evolução Real -->
+          <div class="h-48">
+            <canvas id="goalGlideChart"></canvas>
+          </div>
+
+          <!-- Decomposição do Gap por Alavanca -->
+          <div class="space-y-2.5 pt-1 border-t border-white/5">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400" id="goalBreakdownTitle">
+              Onde Ganhar os 11m42s (Alavancas)
+            </div>
+            <div id="goalBreakdownList" class="space-y-2.5"></div>
           </div>
         </div>
 
@@ -583,11 +612,57 @@
     };
 
     let liveSportsData = JSON.parse(JSON.stringify(FALLBACK_SPORTS));
+    let currentGoalKey = 'rio';
+    let liveGoalProgress = {
+      rio: {
+        title: "Meia Maratona do Rio",
+        dateLabel: "Mai/2027",
+        weeksLeft: 26,
+        readinessPct: 78,
+        currentEst: "01:41:42",
+        currentSub: "4:49/km",
+        targetVal: "01:30:00",
+        targetSub: "4:15/km",
+        gapVal: "-11:42",
+        gapSub: "-34 s/km",
+        breakdownTitle: "Onde Ganhar os 11m42s (Alavancas)",
+        labels: ["Nov/26", "Dez/26", "Jan/27", "Fev/27", "Mar/27", "Abr/27", "Mai/27"],
+        idealCurve: [76, 80, 84, 88, 92, 96, 100],
+        actualCurve: [78, null, null, null, null, null, null],
+        pillars: [
+          { name: "Economia de Corrida (Pace Z2/Limiar)", current: "4:49/km", target: "4:15/km", pct: 76, color: "bg-indigo-400" },
+          { name: "Lastro Aeróbico Crônico (CTL)", current: "68,6 CTL", target: "82,0 CTL", pct: 84, color: "bg-sky-400" },
+          { name: "Eficiência Peso/Potência & Joelho", current: "85,0 kg", target: "81,5 kg", pct: 74, color: "bg-emerald-400" }
+        ]
+      },
+      floripa: {
+        title: "IRONMAN 70.3 Florianópolis",
+        dateLabel: "Out/2027",
+        weeksLeft: 46,
+        readinessPct: 82,
+        currentEst: "05:12:00",
+        currentSub: "Simulado recente",
+        targetVal: "04:50:00",
+        targetSub: "Sub-4h50",
+        gapVal: "-22:00",
+        gapSub: "Distribuído",
+        breakdownTitle: "Onde Ganhar os 22 min (Por Modalidade)",
+        labels: ["Nov/26", "Jan/27", "Mar/27", "Mai/27", "Jul/27", "Set/27", "Out/27"],
+        idealCurve: [80, 83, 87, 90, 94, 97, 100],
+        actualCurve: [82, null, null, null, null, null, null],
+        pillars: [
+          { name: "🚴 Ciclismo 90 km (Alvo: 02:30:00 | 36 km/h)", current: "02:39:00", target: "02:30:00", pct: 83, color: "bg-teal-400" },
+          { name: "🏃 Meia Pós-Bike 21,1 km (Alvo: 01:40:00 | 4:44/km)", current: "01:49:00", target: "01:40:00", pct: 79, color: "bg-indigo-400" },
+          { name: "🏊 Natação 1,9 km + T1/T2 (Alvo: 00:40:00)", current: "00:44:00", target: "00:40:00", pct: 85, color: "bg-sky-400" }
+        ]
+      }
+    };
     let charts = {
       pmc: null,
       split: null,
       stack: null,
       zones: null,
+      goalGlide: null,
       sportDetail: null
     };
 
@@ -778,6 +853,101 @@
           }
         }
       });
+
+      // 5. Goal Glide Path Chart
+      renderGoalProgressCard(currentGoalKey);
+    }
+
+    function selectGoalTarget(goalKey) {
+      currentGoalKey = goalKey;
+      ['rio', 'floripa'].forEach(k => {
+        const btn = document.getElementById('goalBtn-' + k);
+        if (k === goalKey) {
+          btn.className = 'bg-sky-500 text-slate-950 font-bold text-xs py-2 rounded-lg transition';
+        } else {
+          btn.className = 'text-gray-400 hover:text-white font-semibold text-xs py-2 rounded-lg transition';
+        }
+      });
+      renderGoalProgressCard(goalKey);
+    }
+
+    function renderGoalProgressCard(goalKey) {
+      const g = liveGoalProgress[goalKey];
+      if (!g) return;
+
+      document.getElementById('goalReadinessPct').innerText = g.readinessPct + '%';
+      document.getElementById('goalWeeksLeft').innerText = g.weeksLeft + ' sem. restantes';
+      document.getElementById('goalCurrentEst').innerText = g.currentEst;
+      document.getElementById('goalCurrentSub').innerText = g.currentSub;
+      document.getElementById('goalTargetVal').innerText = g.targetVal;
+      document.getElementById('goalTargetSub').innerText = g.targetSub;
+      document.getElementById('goalGapVal').innerText = g.gapVal;
+      document.getElementById('goalGapSub').innerText = g.gapSub;
+      document.getElementById('goalBreakdownTitle').innerText = g.breakdownTitle;
+
+      document.getElementById('goalBreakdownList').innerHTML = g.pillars.map(p => `
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px]">
+            <span class="text-gray-300 font-medium">${p.name}</span>
+            <span class="text-white font-bold">${p.current} <span class="text-gray-500 font-normal">→ ${p.target}</span></span>
+          </div>
+          <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full ${p.color} rounded-full transition-all duration-500" style="width: ${Math.min(100, Math.max(10, p.pct))}%"></div>
+          </div>
+        </div>
+      `).join('');
+
+      const ctxGoal = document.getElementById('goalGlideChart').getContext('2d');
+      if (charts.goalGlide) charts.goalGlide.destroy();
+      charts.goalGlide = new Chart(ctxGoal, {
+        type: 'line',
+        data: {
+          labels: g.labels,
+          datasets: [
+            {
+              label: 'Trajetória Ideal (%)',
+              data: g.idealCurve,
+              borderColor: '#64748B',
+              borderDash: [5, 5],
+              tension: 0.3,
+              borderWidth: 2,
+              pointRadius: 3
+            },
+            {
+              label: 'Sua Evolução Real (%)',
+              data: g.actualCurve,
+              borderColor: '#34D399',
+              backgroundColor: 'rgba(52, 211, 153, 0.16)',
+              fill: true,
+              tension: 0.3,
+              borderWidth: 3,
+              pointRadius: 5,
+              pointBackgroundColor: '#34D399',
+              spanGaps: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#9CA3AF', font: { size: 10 }, boxWidth: 12 } }
+          },
+          scales: {
+            x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: {
+              min: 65,
+              max: 102,
+              ticks: {
+                color: '#6B7280',
+                font: { size: 10 },
+                callback: v => v + '%'
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
     }
 
     function renderSportDetailView(sportKey) {
@@ -925,6 +1095,20 @@
         document.getElementById('lastSyncText').innerText = 'Atualizado às ' + data.updatedAt;
 
         if (data.sports) liveSportsData = data.sports;
+        if (data.goalProgress) {
+          liveGoalProgress = data.goalProgress;
+        } else if (t && t.ctl) {
+          // Recalcula dinamicamente a aproximação com base no CTL ao vivo
+          const ctlFactorRio = Math.min(100, Math.round((t.ctl / 82) * 100));
+          liveGoalProgress.rio.readinessPct = Math.round(76 * 0.6 + ctlFactorRio * 0.4);
+          liveGoalProgress.rio.actualCurve[0] = liveGoalProgress.rio.readinessPct;
+          liveGoalProgress.rio.pillars[1].current = String(t.ctl.toFixed(1)).replace('.', ',') + ' CTL';
+          liveGoalProgress.rio.pillars[1].pct = ctlFactorRio;
+
+          const ctlFactor703 = Math.min(100, Math.round((t.ctl / 98) * 100));
+          liveGoalProgress.floripa.readinessPct = Math.round(84 * 0.65 + ctlFactor703 * 0.35);
+          liveGoalProgress.floripa.actualCurve[0] = liveGoalProgress.floripa.readinessPct;
+        }
         if (data.pmc && data.pmc.labels && data.pmc.labels.length) {
           renderGeneralCharts(data.pmc, data.weeklyDisciplines || {
             labels: ['09/11', '16/11', '23/11'],
