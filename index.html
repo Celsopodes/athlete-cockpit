@@ -121,21 +121,21 @@
         </div>
       </div>
 
-      <!-- ACWR & Load Balance Bar -->
+      <!-- ACWR & Load Balance Bar (Layout Flexível Sem Corte) -->
       <div class="card p-4 space-y-2.5">
-        <div class="flex items-center justify-between">
-          <div>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <span class="text-xs font-bold text-white">Load Balance (ACWR)</span>
-            <span class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold" id="acwrBadge">1,31 • OVERLOAD</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold whitespace-nowrap" id="acwrBadge">1,31 • OVERLOAD</span>
           </div>
-          <span class="text-xs font-bold text-gray-300" id="weekLoadText">116,7 UA sem.</span>
+          <span class="text-xs font-bold text-sky-300 whitespace-nowrap" id="weekLoadText">116,7 UA/sem</span>
         </div>
         <div class="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden relative">
           <div class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 rounded-full transition-all duration-500" id="acwrBar" style="width: 72%"></div>
         </div>
         <div class="flex justify-between text-[10px] text-gray-500 font-medium">
           <span>0,80 (Subcarga)</span>
-          <span class="text-emerald-400">0,80–1,30 (Sweet Spot)</span>
+          <span class="text-emerald-400">0,80–1,30 (Ideal)</span>
           <span>1,50+ (Risco)</span>
         </div>
       </div>
@@ -173,7 +173,10 @@
               <div class="text-[11px] text-gray-400">Body Battery</div>
               <div class="text-lg font-bold text-white mt-0.5"><span id="bioBb">82</span><span class="text-xs font-normal text-gray-400">/100</span></div>
             </div>
-            <span class="text-[10px] font-semibold text-gray-400">Estresse <span id="bioStress">27</span></span>
+            <div class="text-right">
+              <div class="text-[10px] font-semibold text-sky-400" id="bioBbPeak">Pico 82</div>
+              <div class="text-[10px] font-semibold text-gray-400">Estresse <span id="bioStress">27</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1032,13 +1035,16 @@
         document.getElementById('kpiTsb').innerText = String(t.tsb.toFixed(1)).replace('.', ',');
         document.getElementById('readinessBig').innerText = t.readinessScore;
         document.getElementById('acwrBadge').innerText = `${String(t.acwr.toFixed(2)).replace('.', ',')} • ${t.acwrStatus}`;
-        document.getElementById('weekLoadText').innerText = `${String(t.weekLoad.toFixed(1)).replace('.', ',')} UA sem.`;
+        document.getElementById('weekLoadText').innerText = `${String(t.weekLoad.toFixed(1)).replace('.', ',')} UA/sem`;
         document.getElementById('bioHrv').innerText = t.hrv;
         document.getElementById('bioHrvStatus').innerText = t.hrvStatus;
         document.getElementById('bioSleep').innerText = String(t.sleepHours).replace('.', ',');
         document.getElementById('bioSleepScore').innerText = t.sleepScore;
         document.getElementById('bioRhr').innerText = t.rhr;
         document.getElementById('bioBb').innerText = t.bodyBattery;
+        if (t.bodyBatteryPeak) {
+          document.getElementById('bioBbPeak').innerText = 'Pico ' + t.bodyBatteryPeak;
+        }
         document.getElementById('bioStress').innerText = t.stress;
         document.getElementById('wkHours').innerText = String(t.weekHours.toFixed(2)).replace('.', ',');
         document.getElementById('wkLoad').innerText = String(t.weekLoad.toFixed(1)).replace('.', ',');
