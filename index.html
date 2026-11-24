@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0B0E14" />
   <meta name="mobile-web-app-capable" content="yes" />
-<link rel="manifest" href="./manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Athlete Cockpit" />
+  <link rel="manifest" href="./manifest.json" />
   <title>Athlete Cockpit • Neto</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -30,6 +30,24 @@
     }
     .tab-inactive {
       color: #6B7280;
+    }
+    .pill-active {
+      background-color: #38BDF8;
+      color: #0B0E14;
+      font-weight: 700;
+      border-color: #38BDF8;
+    }
+    .pill-inactive {
+      background-color: rgba(255, 255, 255, 0.04);
+      color: #9CA3AF;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
     input[type="range"] {
       accent-color: #38BDF8;
@@ -163,7 +181,10 @@
 
       <!-- Resumo da Semana Atual -->
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Semana Atual (Desde Segunda)</h3>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Semana Atual (Desde Segunda)</h3>
+          <span class="text-[10px] text-sky-400 font-semibold" id="wkDistText">9,8 km acum.</span>
+        </div>
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-white/[0.03] p-2.5 rounded-xl">
             <div class="text-[10px] text-gray-400">Volume</div>
@@ -182,46 +203,179 @@
 
     </section>
 
-    <!-- ==================== TAB 2: CARGA & PMC ==================== -->
+    <!-- ==================== TAB 2: ANALYTICS & ESPORTES ==================== -->
     <section id="tab-carga" class="hidden space-y-4">
-      <div class="card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h2 class="text-sm font-bold text-white">Performance Management (PMC)</h2>
-            <p class="text-[11px] text-gray-400">Evolução CTL (Fitness) vs ATL (Fatigue)</p>
-          </div>
-        </div>
-        <div class="h-56">
-          <canvas id="pmcChart"></canvas>
-        </div>
+
+      <!-- Filtro de Modalidades -->
+      <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="selectSportFilter('geral')" id="pill-geral" class="pill-active border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition">
+          📊 Geral
+        </button>
+        <button onclick="selectSportFilter('cycling')" id="pill-cycling" class="pill-inactive border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition">
+          🚴 Ciclismo
+        </button>
+        <button onclick="selectSportFilter('running')" id="pill-running" class="pill-inactive border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition">
+          🏃 Corrida
+        </button>
+        <button onclick="selectSportFilter('swimming')" id="pill-swimming" class="pill-inactive border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition">
+          🏊 Natação
+        </button>
+        <button onclick="selectSportFilter('strength')" id="pill-strength" class="pill-inactive border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition">
+          🏋️ Musculação
+        </button>
       </div>
 
-      <div class="card p-4">
-        <h2 class="text-sm font-bold text-white mb-1">Metas Macrociclo 2027</h2>
-        <p class="text-[11px] text-gray-400 mb-3">Projeção atual vs objetivos</p>
-        <div class="space-y-3">
-          <div class="bg-white/[0.03] p-3 rounded-xl">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-white">Meia Maratona do Rio (Mai/27)</span>
-              <span class="text-sky-400">Alvo: 01:30:00 (4:15/km)</span>
+      <!-- VISÃO 1: GERAL (TRIATLO & PMC) -->
+      <div id="analytics-geral" class="space-y-4">
+
+        <!-- Gráfico 1: PMC Banister -->
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h2 class="text-sm font-bold text-white">Performance Management (PMC)</h2>
+              <p class="text-[11px] text-gray-400">Fitness (CTL), Fatigue (ATL) e Form (TSB)</p>
             </div>
-            <div class="flex justify-between text-[11px] text-gray-400 mt-1">
-              <span>Atual est.: 01:41:42 (4:49/km)</span>
-              <span class="text-amber-400">Gap: -34 s/km</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-300">14 dias</span>
+          </div>
+          <div class="h-52">
+            <canvas id="pmcChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Distribuição por Modalidade (Sport Split) -->
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h2 class="text-sm font-bold text-white">Divisão por Modalidade</h2>
+              <p class="text-[11px] text-gray-400">Proporção de horas acumuladas nas últimas semanas</p>
             </div>
           </div>
-          <div class="bg-white/[0.03] p-3 rounded-xl">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-white">IRONMAN 70.3 Floripa (Out/27)</span>
-              <span class="text-emerald-400">Alvo: Sub-04:50:00</span>
+          <div class="grid grid-cols-2 gap-3 items-center pt-1">
+            <div class="h-40 relative">
+              <canvas id="sportSplitChart"></canvas>
             </div>
-            <div class="flex justify-between text-[11px] text-gray-400 mt-1">
-              <span>Atual est.: 05:15:00</span>
-              <span class="text-amber-400">Gap: -25 min</span>
+            <div class="space-y-2 text-xs" id="sportSplitLegend">
+              <div class="flex justify-between items-center">
+                <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>Ciclismo</span>
+                <span class="font-bold text-white">45%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>Natação</span>
+                <span class="font-bold text-white">23%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>Força</span>
+                <span class="font-bold text-white">22%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>Corrida</span>
+                <span class="font-bold text-white">9%</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Gráfico 3: Volume Semanal por Esporte -->
+        <div class="card p-4">
+          <div class="mb-2">
+            <h2 class="text-sm font-bold text-white">Volume Semanal por Disciplina (h)</h2>
+            <p class="text-[11px] text-gray-400">Evolução das horas semanais empilhadas</p>
+          </div>
+          <div class="h-48">
+            <canvas id="weeklyStackChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 4: Distribuição por Zonas de FC (LTHR 157 bpm) -->
+        <div class="card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h2 class="text-sm font-bold text-white">Zonas de Frequência Cardíaca</h2>
+              <p class="text-[11px] text-gray-400">Calibrado pelo seu LTHR de 157 bpm</p>
+            </div>
+            <span class="text-[10px] font-semibold text-emerald-400">Polarizado 80/20</span>
+          </div>
+          <div class="h-44">
+            <canvas id="hrZonesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Metas Macrociclo 2027 -->
+        <div class="card p-4">
+          <h2 class="text-sm font-bold text-white mb-1">Metas Macrociclo 2027</h2>
+          <p class="text-[11px] text-gray-400 mb-3">Projeção atual vs objetivos</p>
+          <div class="space-y-3">
+            <div class="bg-white/[0.03] p-3 rounded-xl">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-white">Meia Maratona do Rio (Mai/27)</span>
+                <span class="text-sky-400">Alvo: 01:30:00 (4:15/km)</span>
+              </div>
+              <div class="flex justify-between text-[11px] text-gray-400 mt-1">
+                <span>Atual est.: 01:41:42 (4:49/km)</span>
+                <span class="text-amber-400">Gap: -34 s/km</span>
+              </div>
+            </div>
+            <div class="bg-white/[0.03] p-3 rounded-xl">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-white">IRONMAN 70.3 Floripa (Out/27)</span>
+                <span class="text-emerald-400">Alvo: Sub-04:50:00</span>
+              </div>
+              <div class="flex justify-between text-[11px] text-gray-400 mt-1">
+                <span>Atual est.: 05:15:00</span>
+                <span class="text-amber-400">Gap: -25 min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
+
+      <!-- VISÃO 2: DETALHE POR ESPORTE INDIVIDUAL -->
+      <div id="analytics-sport" class="hidden space-y-4">
+
+        <!-- 4 KPIs do Esporte -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase text-gray-400">Sessões & Volume</div>
+            <div class="text-xl font-extrabold text-white mt-1" id="spKpiVol">4 sessões</div>
+            <div class="text-[11px] text-sky-400 mt-0.5" id="spKpiHours">6,6 h totais</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase text-gray-400">Distância Total</div>
+            <div class="text-xl font-extrabold text-teal-400 mt-1" id="spKpiDist">188,6 km</div>
+            <div class="text-[11px] text-gray-400 mt-0.5" id="spKpiAvgDist">47,2 km / sessão</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase text-gray-400" id="spKpiMetricLabel">Velocidade Média</div>
+            <div class="text-xl font-extrabold text-emerald-400 mt-1" id="spKpiMetricVal">28,6 km/h</div>
+            <div class="text-[11px] text-gray-400 mt-0.5" id="spKpiMetricSub">Eficiência aeróbica</div>
+          </div>
+          <div class="card p-3.5">
+            <div class="text-[10px] font-semibold uppercase text-gray-400">FC Média & Carga</div>
+            <div class="text-xl font-extrabold text-purple-400 mt-1" id="spKpiHr">129 bpm</div>
+            <div class="text-[11px] text-amber-300 mt-0.5" id="spKpiTrimp">301 UA acumuladas</div>
+          </div>
+        </div>
+
+        <!-- Gráfico de Evolução do Esporte (Pace/Velocidade vs FC) -->
+        <div class="card p-4">
+          <div class="mb-2">
+            <h2 class="text-sm font-bold text-white" id="spChartTitle">Evolução de Desempenho × FC Média</h2>
+            <p class="text-[11px] text-gray-400" id="spChartSubtitle">Comparativo sessão a sessão</p>
+          </div>
+          <div class="h-52">
+            <canvas id="sportDetailChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Lista de Últimas Sessões da Modalidade -->
+        <div class="card p-4 space-y-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Últimas Sessões Registradas</h3>
+          <div id="spHistoryList" class="space-y-2"></div>
+        </div>
+
+      </div>
+
     </section>
 
     <!-- ==================== TAB 3: AGENDA ==================== -->
@@ -295,7 +449,7 @@
       </button>
       <button onclick="switchTab('carga')" id="nav-carga" class="tab-inactive flex flex-col items-center py-1">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
-        <span class="text-[10px] font-semibold">Carga & PMC</span>
+        <span class="text-[10px] font-semibold">Analytics</span>
       </button>
       <button onclick="switchTab('agenda')" id="nav-agenda" class="tab-inactive flex flex-col items-center py-1">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -339,7 +493,103 @@
       { date: "2026-11-29", title: "SIMULADO BRICK: Bike 76min + Corrida 24min", sport: "brick", duration: 100 }
     ];
 
-    let pmcChartInstance = null;
+    const FALLBACK_SPORTS = {
+      cycling: {
+        label: "Ciclismo",
+        sessionsCount: 4,
+        totalHours: "6,6 h",
+        totalDistance: "188,6 km",
+        avgDistPerSession: "47,2 km/sessão",
+        metricLabel: "Velocidade Média",
+        metricValue: "28,6 km/h",
+        metricSub: "Eficiência aeróbica",
+        avgHr: "129 bpm",
+        totalTrimp: "301 UA",
+        chartTitle: "Ciclismo: Velocidade (km/h) × FC Média",
+        chartSubtitle: "Últimas sessões de estrada e rolo",
+        primaryLabel: "Velocidade (km/h)",
+        primaryColor: "#2DD4BF",
+        history: [
+          { date: "22/11", title: "Ciclismo Longo Estrada", dist: "90,4 km", dur: "183 min", hr: 127, paceOrSpeed: "29,6 km/h", trimp: 131.3 },
+          { date: "21/11", title: "Ciclismo Base Pré-Brick", dist: "52,8 km", dur: "110 min", hr: 125, paceOrSpeed: "28,8 km/h", trimp: 75.5 },
+          { date: "19/11", title: "Ciclismo Cadência", dist: "30,3 km", dur: "65 min", hr: 129, paceOrSpeed: "27,9 km/h", trimp: 51.8 },
+          { date: "18/11", title: "Ciclismo Intervalado", dist: "15,1 km", dur: "38 min", hr: 136, paceOrSpeed: "23,8 km/h", trimp: 42.3 }
+        ]
+      },
+      running: {
+        label: "Corrida",
+        sessionsCount: 3,
+        totalHours: "2,2 h",
+        totalDistance: "23,2 km",
+        avgDistPerSession: "7,7 km/sessão",
+        metricLabel: "Pace Médio",
+        metricValue: "5:39 /km",
+        metricSub: "Z2 Controlado",
+        avgHr: "139 bpm",
+        totalTrimp: "159 UA",
+        chartTitle: "Corrida: Velocidade (km/h) × FC Média",
+        chartSubtitle: "Rua e Esteira consolidados",
+        primaryLabel: "Velocidade (km/h)",
+        primaryColor: "#818CF8",
+        history: [
+          { date: "23/11", title: "Corrida Esteira Z2", dist: "6,7 km", dur: "35 min", hr: 134, paceOrSpeed: "5:14 /km", trimp: 48.2 },
+          { date: "21/11", title: "Corrida Pós-Bike (390W)", dist: "8,1 km", dur: "46 min", hr: 145, paceOrSpeed: "5:41 /km", trimp: 68.1 },
+          { date: "18/11", title: "Corrida Contínua Leve", dist: "8,4 km", dur: "50 min", hr: 137, paceOrSpeed: "5:57 /km", trimp: 43.0 }
+        ]
+      },
+      swimming: {
+        label: "Natação",
+        sessionsCount: 4,
+        totalHours: "3,8 h",
+        totalDistance: "10,5 km",
+        avgDistPerSession: "2.625 m/sessão",
+        metricLabel: "Pace Médio /100m",
+        metricValue: "2:08 /100m",
+        metricSub: "Grade fixa semanal",
+        avgHr: "126 bpm",
+        totalTrimp: "212 UA",
+        chartTitle: "Natação: Ritmo (m/min) × FC Média",
+        chartSubtitle: "Sessões de 1.500 m a 3.000 m",
+        primaryLabel: "Ritmo (m/min)",
+        primaryColor: "#38BDF8",
+        history: [
+          { date: "23/11", title: "Piscina 3.000 m Fixa", dist: "3.000 m", dur: "65 min", hr: 127, paceOrSpeed: "2:10 /100m", trimp: 48.5 },
+          { date: "21/11", title: "Piscina 1.500 m Pós-Brick", dist: "1.500 m", dur: "32 min", hr: 129, paceOrSpeed: "2:08 /100m", trimp: 61.6 },
+          { date: "19/11", title: "Piscina 3.000 m Técnica", dist: "3.000 m", dur: "64 min", hr: 124, paceOrSpeed: "2:08 /100m", trimp: 51.0 },
+          { date: "17/11", title: "Piscina 3.000 m Base", dist: "3.000 m", dur: "63 min", hr: 125, paceOrSpeed: "2:06 /100m", trimp: 50.9 }
+        ]
+      },
+      strength: {
+        label: "Musculação",
+        sessionsCount: 3,
+        totalHours: "2,2 h",
+        totalDistance: "130 min",
+        avgDistPerSession: "43 min/sessão",
+        metricLabel: "Duração Média",
+        metricValue: "43 min",
+        metricSub: "Força + Prevenção Joelho",
+        avgHr: "82 bpm",
+        totalTrimp: "49 UA",
+        chartTitle: "Musculação: Duração (min) × FC Média",
+        chartSubtitle: "Sessões de força máxima e estabilidade",
+        primaryLabel: "Duração (min)",
+        primaryColor: "#FBBF24",
+        history: [
+          { date: "23/11", title: "Força Empurrar + Core + Sóleo", dist: "42 min", dur: "42 min", hr: 79, paceOrSpeed: "RPE 5/10", trimp: 20.0 },
+          { date: "20/11", title: "Força Inferiores & Estabilidade", dist: "44 min", dur: "44 min", hr: 84, paceOrSpeed: "RPE 7/10", trimp: 15.2 },
+          { date: "17/11", title: "Força Tração & Escápula", dist: "44 min", dur: "44 min", hr: 83, paceOrSpeed: "RPE 6/10", trimp: 14.1 }
+        ]
+      }
+    };
+
+    let liveSportsData = JSON.parse(JSON.stringify(FALLBACK_SPORTS));
+    let charts = {
+      pmc: null,
+      split: null,
+      stack: null,
+      zones: null,
+      sportDetail: null
+    };
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -355,6 +605,22 @@
       });
       document.getElementById('tab-' + tab).classList.remove('hidden');
       document.getElementById('nav-' + tab).className = 'tab-active flex flex-col items-center py-1';
+    }
+
+    function selectSportFilter(sportKey) {
+      ['geral', 'cycling', 'running', 'swimming', 'strength'].forEach(k => {
+        const pill = document.getElementById('pill-' + k);
+        pill.className = (k === sportKey ? 'pill-active' : 'pill-inactive') + ' border text-xs px-3.5 py-2 rounded-xl whitespace-nowrap transition';
+      });
+
+      if (sportKey === 'geral') {
+        document.getElementById('analytics-geral').classList.remove('hidden');
+        document.getElementById('analytics-sport').classList.add('hidden');
+      } else {
+        document.getElementById('analytics-geral').classList.add('hidden');
+        document.getElementById('analytics-sport').classList.remove('hidden');
+        renderSportDetailView(sportKey);
+      }
     }
 
     function openConfigModal() {
@@ -395,17 +661,18 @@
       `).join('');
     }
 
-    function renderPmcChart(pmc) {
-      const ctx = document.getElementById('pmcChart').getContext('2d');
-      if (pmcChartInstance) pmcChartInstance.destroy();
-      pmcChartInstance = new Chart(ctx, {
+    function renderGeneralCharts(pmcData, weeklyData) {
+      // 1. PMC Chart
+      const ctxPmc = document.getElementById('pmcChart').getContext('2d');
+      if (charts.pmc) charts.pmc.destroy();
+      charts.pmc = new Chart(ctxPmc, {
         type: 'line',
         data: {
-          labels: pmc.labels,
+          labels: pmcData.labels,
           datasets: [
             {
               label: 'Fitness (CTL)',
-              data: pmc.ctl,
+              data: pmcData.ctl,
               borderColor: '#38BDF8',
               backgroundColor: 'rgba(56, 189, 248, 0.12)',
               fill: true,
@@ -414,23 +681,196 @@
             },
             {
               label: 'Fatigue (ATL)',
-              data: pmc.atl,
+              data: pmcData.atl,
               borderColor: '#C084FC',
               tension: 0.35,
               borderWidth: 2
+            },
+            {
+              label: 'Form (TSB)',
+              data: pmcData.tsb,
+              borderColor: '#FBBF24',
+              borderDash: [4, 4],
+              tension: 0.35,
+              borderWidth: 1.8
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 11 } } } },
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 }, boxWidth: 12 } } },
           scales: {
             x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
             y: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
           }
         }
       });
+
+      // 2. Sport Split Doughnut
+      const ctxSplit = document.getElementById('sportSplitChart').getContext('2d');
+      if (charts.split) charts.split.destroy();
+      charts.split = new Chart(ctxSplit, {
+        type: 'doughnut',
+        data: {
+          labels: ['Ciclismo', 'Natação', 'Força', 'Corrida'],
+          datasets: [{
+            data: [45, 23, 22, 9],
+            backgroundColor: ['#2DD4BF', '#38BDF8', '#FBBF24', '#818CF8'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      // 3. Weekly Stacked Bar Chart
+      const ctxStack = document.getElementById('weeklyStackChart').getContext('2d');
+      if (charts.stack) charts.stack.destroy();
+      charts.stack = new Chart(ctxStack, {
+        type: 'bar',
+        data: {
+          labels: weeklyData.labels,
+          datasets: [
+            { label: 'Ciclismo', data: weeklyData.cycling, backgroundColor: '#2DD4BF', borderRadius: 4 },
+            { label: 'Natação', data: weeklyData.swimming, backgroundColor: '#38BDF8', borderRadius: 4 },
+            { label: 'Força', data: weeklyData.strength, backgroundColor: '#FBBF24', borderRadius: 4 },
+            { label: 'Corrida', data: weeklyData.running, backgroundColor: '#818CF8', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 }, boxWidth: 10 } } },
+          scales: {
+            x: { stacked: true, ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: { stacked: true, ticks: { color: '#6B7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+          }
+        }
+      });
+
+      // 4. HR Zones Horizontal Bar (LTHR 157 bpm)
+      const ctxZones = document.getElementById('hrZonesChart').getContext('2d');
+      if (charts.zones) charts.zones.destroy();
+      charts.zones = new Chart(ctxZones, {
+        type: 'bar',
+        data: {
+          labels: ['Z1 (<127)', 'Z2 (128-140)', 'Z3 (141-148)', 'Z4 (149-155)', 'Z5 (156+)'],
+          datasets: [{
+            label: '% Tempo',
+            data: [38, 44, 11, 5, 2],
+            backgroundColor: ['#94A3B8', '#34D399', '#38BDF8', '#FBBF24', '#F87171'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#D1D5DB', font: { size: 10 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderSportDetailView(sportKey) {
+      const sp = liveSportsData[sportKey] || FALLBACK_SPORTS[sportKey];
+      document.getElementById('spKpiVol').innerText = `${sp.sessionsCount} sessões`;
+      document.getElementById('spKpiHours').innerText = `${sp.totalHours} totais`;
+      document.getElementById('spKpiDist').innerText = sp.totalDistance;
+      document.getElementById('spKpiAvgDist').innerText = sp.avgDistPerSession;
+      document.getElementById('spKpiMetricLabel').innerText = sp.metricLabel;
+      document.getElementById('spKpiMetricVal').innerText = sp.metricValue;
+      document.getElementById('spKpiMetricSub').innerText = sp.metricSub;
+      document.getElementById('spKpiHr').innerText = sp.avgHr;
+      document.getElementById('spKpiTrimp').innerText = `${sp.totalTrimp} acumuladas`;
+      document.getElementById('spChartTitle').innerText = sp.chartTitle;
+      document.getElementById('spChartSubtitle').innerText = sp.chartSubtitle;
+
+      const histAsc = [...sp.history].reverse();
+      const labels = histAsc.map(h => h.date);
+      const hrSeries = histAsc.map(h => h.hr);
+      const perfSeries = histAsc.map(h => {
+        if (sportKey === 'strength') return parseFloat(h.dur) || 40;
+        if (sportKey === 'swimming') {
+          const m = parseFloat(String(h.dist).replace('.', '').replace(',', '.')) || 3000;
+          const min = parseFloat(h.dur) || 65;
+          return Number((m / min).toFixed(1));
+        }
+        const km = parseFloat(String(h.dist).replace(',', '.')) || 10;
+        const min = parseFloat(h.dur) || 45;
+        return Number((km / (min / 60)).toFixed(1));
+      });
+
+      const ctx = document.getElementById('sportDetailChart').getContext('2d');
+      if (charts.sportDetail) charts.sportDetail.destroy();
+      charts.sportDetail = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: sp.primaryLabel,
+              data: perfSeries,
+              borderColor: sp.primaryColor,
+              backgroundColor: sp.primaryColor + '22',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2.5,
+              yAxisID: 'y'
+            },
+            {
+              label: 'FC Média (bpm)',
+              data: hrSeries,
+              borderColor: '#F472B6',
+              borderDash: [4, 4],
+              tension: 0.35,
+              borderWidth: 2,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9CA3AF', font: { size: 10 }, boxWidth: 12 } } },
+          scales: {
+            x: { ticks: { color: '#6B7280', font: { size: 10 } }, grid: { display: false } },
+            y: {
+              type: 'linear',
+              position: 'left',
+              ticks: { color: sp.primaryColor, font: { size: 10 } },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              ticks: { color: '#F472B6', font: { size: 10 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+
+      document.getElementById('spHistoryList').innerHTML = sp.history.map(h => `
+        <div class="bg-white/[0.03] p-3 rounded-xl flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-bold text-gray-400">${h.date} • ${h.paceOrSpeed}</div>
+            <div class="text-xs font-bold text-white mt-0.5">${h.title}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-bold text-sky-400">${h.dist}</div>
+            <div class="text-[10px] text-gray-400">${h.hr} bpm • ${h.trimp} UA</div>
+          </div>
+        </div>
+      `).join('');
     }
 
     async function fetchDashboardData() {
@@ -438,11 +878,21 @@
       const key = localStorage.getItem('cockpit_key') || 'neto2027';
 
       renderSchedule(DEFAULT_SCHEDULE);
-      renderPmcChart({
-        labels: ['17/11', '18/11', '19/11', '20/11', '21/11', '22/11', '23/11'],
-        ctl: [53.2, 57.7, 59.0, 59.5, 64.6, 66.9, 68.6],
-        atl: [32.4, 52.2, 57.9, 59.9, 79.2, 86.1, 90.2]
-      });
+      renderGeneralCharts(
+        {
+          labels: ['17/11', '18/11', '19/11', '20/11', '21/11', '22/11', '23/11'],
+          ctl: [53.2, 57.7, 59.0, 59.5, 64.6, 66.9, 68.6],
+          atl: [32.4, 52.2, 57.9, 59.9, 79.2, 86.1, 90.2],
+          tsb: [20.8, 5.5, 1.1, -0.4, -14.6, -19.2, -21.6]
+        },
+        {
+          labels: ['09/11', '16/11', '23/11'],
+          cycling: [4.2, 6.6, 0.0],
+          swimming: [3.2, 2.7, 1.1],
+          strength: [1.5, 1.5, 0.7],
+          running: [1.8, 1.6, 0.6]
+        }
+      );
 
       if (!url) return;
 
@@ -467,10 +917,23 @@
         document.getElementById('bioStress').innerText = t.stress;
         document.getElementById('wkHours').innerText = String(t.weekHours.toFixed(2)).replace('.', ',');
         document.getElementById('wkLoad').innerText = String(t.weekLoad.toFixed(1)).replace('.', ',');
-        document.getElementById('wkHr').innerText = t.weekAvgHr;
+        document.getElementById('weekLoadText').innerText = `${String(t.weekLoad.toFixed(1)).replace('.', ',')} UA sem.`;
+        if (t.weekDistance !== undefined) {
+          document.getElementById('wkDistText').innerText = `${String(Number(t.weekDistance).toFixed(1)).replace('.', ',')} km acum.`;
+        }
+        document.getElementById('wkHr').innerText = Math.round(t.weekAvgHr);
         document.getElementById('lastSyncText').innerText = 'Atualizado às ' + data.updatedAt;
 
-        if (data.pmc && data.pmc.labels.length) renderPmcChart(data.pmc);
+        if (data.sports) liveSportsData = data.sports;
+        if (data.pmc && data.pmc.labels && data.pmc.labels.length) {
+          renderGeneralCharts(data.pmc, data.weeklyDisciplines || {
+            labels: ['09/11', '16/11', '23/11'],
+            cycling: [4.2, 6.6, 0.0],
+            swimming: [3.2, 2.7, 1.1],
+            strength: [1.5, 1.5, 0.7],
+            running: [1.8, 1.6, 0.6]
+          });
+        }
         if (data.schedule && data.schedule.length) renderSchedule(data.schedule);
         showToast('Painel conectado ao vivo com sucesso!');
       } catch (err) {
@@ -534,10 +997,11 @@
       }
     }
 
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
     window.addEventListener('DOMContentLoaded', fetchDashboardData);
   </script>
 </body>
 </html>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
